@@ -189,3 +189,106 @@ Então, entender o exemplo do **paperboy** é entende a **diferença entre progr
 | Lógica espalhada em serviços externos   | Lógica encapsulada nas entidades |
 | Frágil, difícil de manter               | Robusto, expressivo e coeso      |
 | Anti-padrão no DDD                      | Padrão recomendado               |
+
+
+
+Claro! Abaixo está um conteúdo **didático e direto** para o tópico **4. Padrões Estratégicos do DDD (15 minutos)**, com explicações acessíveis, exemplos práticos e sugestões de perguntas para envolver a turma.
+
+---
+
+## 🎯 4. Padrões Estratégicos do DDD (15 min)
+
+Os **padrões estratégicos** do DDD ajudam a lidar com a **complexidade em nível de sistema**. Em vez de pensar apenas em entidades ou regras isoladas, aqui o foco é em **separar contextos**, organizar equipes e garantir que tudo esteja falando a mesma língua.
+
+---
+
+### 🧱 1. **Bounded Context (Contexto Delimitado)**
+
+> Um **Bounded Context** é um **limite bem definido** onde **um modelo de domínio específico** é aplicado e **faz sentido completo** por si só.
+
+#### ✅ Por que isso é importante?
+
+* Em sistemas grandes, diferentes áreas usam **as mesmas palavras com significados diferentes**.
+* Separar contextos evita confusão, retrabalho e código "genérico demais".
+
+#### 📦 Exemplo hospitalar:
+
+* No contexto **Farmácia**, "prescrição" significa uma **lista de medicamentos**.
+* No contexto **Faturamento**, "prescrição" pode significar **itens a cobrar**.
+
+➡️ Ambos usam o termo "prescrição", mas são contextos distintos.
+
+#### 📌 Dica didática:
+
+> Pergunte aos alunos: *"Vocês já viram a palavra 'cliente' significar algo diferente entre setores da mesma empresa?"*
+
+---
+
+### 🗺️ 2. **Mapeamento de Contexto (Context Map)**
+
+> O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se relacionam entre si**. Isso ajuda a organizar responsabilidades e integrações.
+
+#### 🧩 Tipos comuns de relacionamento:
+
+| Tipo de Relação          | Descrição rápida                                  |
+| ------------------------ | ------------------------------------------------- |
+| **Partnership**          | Dois contextos colaboram ativamente               |
+| **Customer/Supplier**    | Um contexto depende da saída de outro             |
+| **Conformist**           | Um contexto precisa se adaptar ao modelo do outro |
+| **Anticorruption Layer** | Um contexto protege seu modelo com um "tradutor"  |
+| **Shared Kernel**        | Compartilham uma pequena parte do modelo          |
+
+#### 🎓 Exemplo visual:
+
+Imagine o mapa de um hospital:
+
+* Atendimento → Internação → Faturamento
+* Farmácia ↔ Internação
+* Faturamento ⬅ Anticorruption Layer ⬅ Farmácia
+
+---
+
+### 🗣️ 3. **Linguagem Ubíqua (Ubiquitous Language)**
+
+> Uma **linguagem ubíqua** é um vocabulário **compartilhado entre especialistas do domínio e desenvolvedores**, que guia a modelagem e aparece no código, nos diagramas e nas conversas.
+
+#### ✅ Benefícios:
+
+* Reduz erros de entendimento.
+* Aumenta a coesão entre código e negócio.
+* Ajuda a documentação ser viva e clara.
+
+#### 🧾 Exemplo em código:
+
+```python
+class Prescricao:
+    def adicionar_medicamento(self, medicamento):
+        # comportamento que o farmacêutico entende
+```
+
+➡️ Não usamos `insertItem()` ou `handleList()` — usamos o **termo real** que o farmacêutico usa.
+
+---
+
+### 📌 Dica para discussão com a turma:
+
+> “O que acontece quando o código usa nomes técnicos genéricos (`data`, `item`, `controller`) e ninguém sabe do que se trata?”
+
+👉 Isso quebra a linguagem ubíqua e enfraquece o modelo.
+
+---
+
+### 🧠 Resumo final
+
+| Padrão Estratégico   | O que é           | Por que importa                       |
+| -------------------- | ----------------- | ------------------------------------- |
+| **Bounded Context**  | Limite do modelo  | Evita confusão e mistura de regras    |
+| **Context Map**      | Mapa das relações | Organiza integração entre módulos     |
+| **Linguagem Ubíqua** | Vocabulário comum | Código e negócio falam a mesma língua |
+
+---
+
+Se quiser, posso montar um slide com esse quadro final, ou desenhar um mapa visual de contextos em um hospital. Deseja isso?
+
+
+
