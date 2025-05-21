@@ -392,6 +392,23 @@ O que acontece quando o código usa nomes técnicos genéricos (`data`, `item`, 
 | **Context Map**      | Mapa das relações | Organiza integração entre módulos     |
 | **Linguagem Ubíqua** | Vocabulário comum | Código e negócio falam a mesma língua |
 
+### 4.5 📊 Visualizando os Padrões Estratégicos com o Modelo C4
+
+Para conectar os conceitos aprendidos sobre **Bounded Context** e **Mapeamento de Contexto**, vamos representar visualmente:
+
+#### 🧱 Nível 1 – System Context Diagram
+Mostra quem são os usuários e sistemas externos que interagem com o Sistema Hospital Vida Plena.
+
+#### 🧱 Nível 2 – Container Diagram
+Mostra como o sistema hospitalar é dividido em containers (módulos), cada um representando um Bounded Context com responsabilidades específicas.
+
+👉 Esses dois níveis ajudam a traduzir o pensamento estratégico do DDD para uma visão arquitetural prática.
+
+### Ferramentas:
+
+[https://c4model.com/](https://c4model.com/)
+[https://structurizr.com/dsl](https://structurizr.com/dsl)
+
 
 ## Hands On
 
@@ -490,7 +507,3 @@ Formem grupos simulando consultorias de tecnologia para:
 * **Não confundam DAO/DTO com entidades de domínio**.
 * **Use o vocabulário real da área de saúde**: falem com especialistas da área se possível.
 * **Nem tudo precisa ser microserviço** — foquem na separação conceitual, não apenas técnica.
-
----
-
-Se quiser, posso transformar isso em um template de slide, formulário de avaliação ou ficha de acompanhamento por grupo. Deseja seguir por esse caminho?
