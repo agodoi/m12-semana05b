@@ -302,6 +302,8 @@ Essa operação envolve **Paciente + Leito**, mas não pertence exclusivamente a
 | **Repositório**        | Acessar agregados sem expor a persistência                   |
 | **Serviço de Domínio** | Modelar ações de negócio que não pertencem a um único objeto |
 
+[AQUI](https://github.com/agodoi/m12-semana05b/blob/main/code/readme.md_) você encontra um exemplo completo **padrões táticos** de C++ para um hospital
+
 
 ## 🎯 4. Padrões Estratégicos do DDD
 
