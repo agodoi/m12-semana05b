@@ -191,62 +191,49 @@ Então, entender o exemplo do **paperboy** é entende a **diferença entre progr
 | Anti-padrão no DDD                      | Padrão recomendado               |
 
 
-
-Claro! Abaixo está um conteúdo **didático e direto** para o tópico **4. Padrões Estratégicos do DDD (15 minutos)**, com explicações acessíveis, exemplos práticos e sugestões de perguntas para envolver a turma.
-
----
-
-## 🎯 4. Padrões Estratégicos do DDD (15 min)
+## 🎯 3. Padrões Estratégicos do DDD
 
 Os **padrões estratégicos** do DDD ajudam a lidar com a **complexidade em nível de sistema**. Em vez de pensar apenas em entidades ou regras isoladas, aqui o foco é em **separar contextos**, organizar equipes e garantir que tudo esteja falando a mesma língua.
 
----
 
-### 🧱 1. **Bounded Context (Contexto Delimitado)**
+### 3.1 🧱 Bounded Context (Contexto Delimitado)
 
-> Um **Bounded Context** é um **limite bem definido** onde **um modelo de domínio específico** é aplicado e **faz sentido completo** por si só.
+Um **Bounded Context** é um **limite bem definido** onde **um modelo de domínio específico** é aplicado e **faz sentido completo** por si só.
 
-#### ✅ Por que isso é importante?
+#### 3.1.1 ✅ Por que isso é importante?
 
-* Em sistemas grandes, diferentes áreas usam **as mesmas palavras com significados diferentes**.
-* Separar contextos evita confusão, retrabalho e código "genérico demais".
+- Em sistemas grandes, diferentes áreas usam **as mesmas palavras com significados diferentes**.
+- Separar contextos evita confusão, retrabalho e código "genérico demais".
 
 #### 📦 Exemplo hospitalar:
 
-* No contexto **Farmácia**, "prescrição" significa uma **lista de medicamentos**.
-* No contexto **Faturamento**, "prescrição" pode significar **itens a cobrar**.
+- No contexto **Farmácia**, "prescrição" significa uma **lista de medicamentos**.
+- No contexto **Faturamento**, "prescrição" pode significar **itens a cobrar**.
+- Moral da história: ➡️ Ambos usam o termo "prescrição", mas são contextos distintos.
 
-➡️ Ambos usam o termo "prescrição", mas são contextos distintos.
+#### 📌 Pergunta: vocês já viram a palavra 'cliente' significar algo diferente entre setores da mesma empresa?
 
-#### 📌 Dica didática:
 
-> Pergunte aos alunos: *"Vocês já viram a palavra 'cliente' significar algo diferente entre setores da mesma empresa?"*
+### 3.2 🗺️ Mapeamento de Contexto (Context Map)
 
----
+O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se relacionam entre si**. Isso ajuda a organizar responsabilidades e integrações.
 
-### 🗺️ 2. **Mapeamento de Contexto (Context Map)**
+| Tipo de Relação          | Explicação Didática                                                                                                                                                                                                                                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Partnership**          | **Parceria total**: os dois contextos trabalham juntos para evoluir e alinhar seus modelos. Equipes têm contato frequente, fazem reuniões conjuntas. É uma relação de confiança mútua. <br>🧠 *Exemplo:* Equipes de Atendimento e Internação decidem juntas como será a passagem de pacientes entre setores.         |
+| **Customer/Supplier**    | Um contexto **depende da entrega do outro**. Um fornece dados ou funcionalidades, o outro consome. O consumidor pode dar feedback, mas o fornecedor tem mais controle. <br>🧠 *Exemplo:* O módulo de Faturamento depende do módulo de Internação para saber quantos dias o paciente ficou.                           |
+| **Conformist**           | Um contexto precisa **aceitar o modelo de outro**, mesmo que não goste. É comum em sistemas legados ou onde não há poder de negociação. <br>🧠 *Exemplo:* O módulo de Farmácia precisa adaptar-se ao formato de prescrição definido pelo módulo Clínico.                                                             |
+| **Anticorruption Layer** | O contexto consumidor **não quer se contaminar** por modelos mal estruturados de outro contexto, então **cria um “tradutor”** para isolar e adaptar os dados. <br>🧠 *Exemplo:* O módulo de Faturamento recebe dados da Farmácia, mas usa uma camada de transformação para adaptá-los ao seu próprio modelo interno. |
+| **Shared Kernel**        | Os dois contextos **compartilham uma pequena parte do modelo**, como uma biblioteca comum, e precisam sincronizar mudanças nessa parte. <br>🧠 *Exemplo:* Atendimento e Internação usam o mesmo objeto `Paciente`, e combinam juntos como ele deve ser estruturado.                                                  |
 
-> O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se relacionam entre si**. Isso ajuda a organizar responsabilidades e integrações.
+#### 3.2.2 🎓 Exemplo visual:
 
-#### 🧩 Tipos comuns de relacionamento:
+Imagine o mapa de um hospital (notem os sentidos das setas):
 
-| Tipo de Relação          | Descrição rápida                                  |
-| ------------------------ | ------------------------------------------------- |
-| **Partnership**          | Dois contextos colaboram ativamente               |
-| **Customer/Supplier**    | Um contexto depende da saída de outro             |
-| **Conformist**           | Um contexto precisa se adaptar ao modelo do outro |
-| **Anticorruption Layer** | Um contexto protege seu modelo com um "tradutor"  |
-| **Shared Kernel**        | Compartilham uma pequena parte do modelo          |
+- Atendimento → Internação → Faturamento
+- Farmácia ↔ Internação
+- Faturamento ⬅ Anticorruption Layer ⬅ Farmácia
 
-#### 🎓 Exemplo visual:
-
-Imagine o mapa de um hospital:
-
-* Atendimento → Internação → Faturamento
-* Farmácia ↔ Internação
-* Faturamento ⬅ Anticorruption Layer ⬅ Farmácia
-
----
 
 ### 🗣️ 3. **Linguagem Ubíqua (Ubiquitous Language)**
 
