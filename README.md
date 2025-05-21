@@ -239,29 +239,24 @@ O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se rel
 
 Imagine o mapa de um hospital (notem os sentidos das setas):
 
-- Atendimento → Internação → Faturamento
-- Farmácia ↔ Internação
-- Faturamento ⬅ Anticorruption Layer ⬅ Farmácia
-
-- - Atendimento → Internação → Faturamento  
-- Internação ← Farmácia  
-- Faturamento ← Anticorruption Layer ← Farmácia
+- Atendimento ➡️ Internação ➡️ Faturamento  
+- Internação 🔁 Farmácia  
+- Farmácia ⬅️ Anticorruption Layer ⬅️ Faturamento
 
 
+### 3.4 🗣️ Linguagem Ubíqua (Ubiquitous Language)
 
-### 🗣️ 3. **Linguagem Ubíqua (Ubiquitous Language)**
+Uma **linguagem ubíqua** é um vocabulário **compartilhado entre especialistas do domínio e desenvolvedores**, que guia a modelagem e aparece no código, nos diagramas e nas conversas.
 
-> Uma **linguagem ubíqua** é um vocabulário **compartilhado entre especialistas do domínio e desenvolvedores**, que guia a modelagem e aparece no código, nos diagramas e nas conversas.
+#### 3.4.1 ✅ Benefícios:
 
-#### ✅ Benefícios:
+- Reduz erros de entendimento.
+- Aumenta a coesão entre código e negócio.
+- Ajuda a documentação ser viva e clara.
 
-* Reduz erros de entendimento.
-* Aumenta a coesão entre código e negócio.
-* Ajuda a documentação ser viva e clara.
+#### 3.4.1 🧾 Exemplo em código:
 
-#### 🧾 Exemplo em código:
-
-```python
+```
 class Prescricao:
     def adicionar_medicamento(self, medicamento):
         # comportamento que o farmacêutico entende
@@ -269,27 +264,22 @@ class Prescricao:
 
 ➡️ Não usamos `insertItem()` ou `handleList()` — usamos o **termo real** que o farmacêutico usa.
 
----
 
-### 📌 Dica para discussão com a turma:
 
-> “O que acontece quando o código usa nomes técnicos genéricos (`data`, `item`, `controller`) e ninguém sabe do que se trata?”
+#### 3.4.2 📌 Pergunta
+
+O que acontece quando o código usa nomes técnicos genéricos (`data`, `item`, `controller`) e ninguém sabe do que se trata?
 
 👉 Isso quebra a linguagem ubíqua e enfraquece o modelo.
 
----
 
-### 🧠 Resumo final
+
+### 3.5 🧠 Resumo final
 
 | Padrão Estratégico   | O que é           | Por que importa                       |
 | -------------------- | ----------------- | ------------------------------------- |
 | **Bounded Context**  | Limite do modelo  | Evita confusão e mistura de regras    |
 | **Context Map**      | Mapa das relações | Organiza integração entre módulos     |
 | **Linguagem Ubíqua** | Vocabulário comum | Código e negócio falam a mesma língua |
-
----
-
-Se quiser, posso montar um slide com esse quadro final, ou desenhar um mapa visual de contextos em um hospital. Deseja isso?
-
 
 
