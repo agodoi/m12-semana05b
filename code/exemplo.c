@@ -1,7 +1,3 @@
-Perfeito! A seguir está um **exemplo completo e didático**, com **todos os padrões táticos do DDD aplicados a um cenário hospitalar**. O exemplo usa linguagem C++ estilo Arduino para manter consistência com os exemplos anteriores e facilitar a compreensão prática.
-
----
-
 ## 🏥 Cenário: Internação de Pacientes em Leitos Hospitalares
 
 ---
@@ -154,7 +150,3 @@ void loop() {
 | `Internacao`           | **Agregado** com raiz e consistência             |
 | `InternacaoRepository` | **Repositório** para persistência                |
 | `InternacaoService`    | **Serviço de Domínio** para registrar internação |
-
----
-
-Se quiser, posso montar esse exemplo com diagrama de classes ou transformar em um sketch para simulação no Wokwi. Deseja seguir com isso?
