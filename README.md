@@ -406,8 +406,8 @@ Mostra como o sistema hospitalar é dividido em containers (módulos), cada um r
 
 ### Ferramentas:
 
-[https://c4model.com/](https://c4model.com/)
-[https://structurizr.com/dsl](https://structurizr.com/dsl)
+* [https://c4model.com/](https://c4model.com/)
+* [https://structurizr.com/dsl](https://structurizr.com/dsl)
 
 
 ## Hands On
