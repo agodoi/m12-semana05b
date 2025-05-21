@@ -191,16 +191,128 @@ Então, entender o exemplo do **paperboy** é entende a **diferença entre progr
 | Anti-padrão no DDD                      | Padrão recomendado               |
 
 
-## 🎯 3. Padrões Estratégicos do DDD
+## 🧩 3. Padrões Táticos do DDD
+
+Os **padrões táticos** do DDD nos ajudam a **modelar o domínio com clareza e organização**, definindo **como representar o negócio no código** por meio de classes bem estruturadas e responsabilidades bem definidas.
+
+### 3.1 🧬 Entidades
+
+São objetos que **têm identidade própria**, ou seja, o que importa é “quem são” e **não apenas seus atributos**.
+
+- Possuem **um identificador único (ID)**.
+- Podem **mudar ao longo do tempo**, mas continuam sendo o mesmo objeto.
+
+#### 🏥 Exemplo hospitalar:
+
+```
+class Paciente {
+private:
+    int id;
+    string nome;
+};
+```
+
+Mesmo que o nome do paciente mude (ex: após casamento), **ele continua sendo o mesmo paciente** no sistema por causa do seu ID.
+
+
+### 3.2 🧱 Objetos de Valor (Value Objects)
+
+São objetos **sem identidade própria**, usados para **expressar um conceito com dados imutáveis**.
+
+- Comparados por seus **atributos** e **não por identidade**.
+- São **imutáveis**: se algo mudar, um novo objeto deve ser criado.
+
+#### 🏥 Exemplo:
+
+```
+class Endereco {
+private:
+    string rua;
+    string cidade;
+};
+```
+
+Dois endereços com os mesmos dados são considerados **iguais**.
+Você não se refere ao "endereço nº 123", mas sim ao conteúdo dele.
+
+### 3.3 🧩 Agregados (Aggregates)
+
+Um **agregado** é um **conjunto de entidades e objetos de valor** que forma uma **unidade de consistência**.
+
+- Possui uma **entidade raiz**, chamada de **Aggregate Root**, que controla o acesso ao restante do agregado.
+- Garante que as **regras de integridade** sejam respeitadas.
+
+#### 🏥 Exemplo:
+
+**Paciente Internado** pode ser o agregado, composto por:
+
+- Entidade raiz: ```Paciente```
+- Objetos de valor: ```Endereco```, ```PeriodoDeInternacao```
+- Subentidades: ```Prescricao`, ```HistoricoDeAlta```
+
+➡️ Todas as alterações devem passar **pela entidade raiz**, evitando manipulação indevida de partes isoladas.
+
+
+### 3.4 💾 Repositórios (Repositories)
+
+São **interfaces de acesso ao agregado**, simulando o comportamento de uma **coleção em memória**, mas que **acessam o banco de dados por trás**.
+
+- Servem para **buscar, salvar e remover agregados**.
+- **Não expõem a infraestrutura** (ex: SQL, Mongo, etc.).
+
+#### 🏥 Exemplo:
+
+```
+class PacienteRepository {
+public:
+    Paciente buscarPorId(int id);
+    void salvar(Paciente paciente);
+};
+```
+
+O desenvolvedor que usa o repositório **não precisa saber** como os dados são persistidos — só precisa pensar em "domínio".
+
+
+### 3.5 🧠 Serviços de Domínio
+
+Representam **operações importantes do negócio** que **não pertencem diretamente a uma única entidade ou objeto de valor**.
+
+- São **sem estado** (stateless).
+- Contêm **regras de negócio que cruzam múltiplas entidades**.
+
+#### 🏥 Exemplo:
+
+```
+class InternacaoService {
+public:
+    void internarPaciente(Paciente paciente, Leito leito);
+};
+```
+
+Essa operação envolve **Paciente + Leito**, mas não pertence exclusivamente a nenhum dos dois.
+➡️ Então é melhor colocá-la em um **Serviço de Domínio**.
+
+### 3.6 🧠 Resumo
+
+| Padrão                 | Para que serve                                               |
+| ---------------------- | ------------------------------------------------------------ |
+| **Entidade**           | Representar um objeto com identidade única                   |
+| **Objeto de Valor**    | Representar conceito imutável (endereços, datas, medidas)    |
+| **Agregado**           | Organizar entidades e valores como uma unidade de negócio    |
+| **Repositório**        | Acessar agregados sem expor a persistência                   |
+| **Serviço de Domínio** | Modelar ações de negócio que não pertencem a um único objeto |
+
+
+## 🎯 4. Padrões Estratégicos do DDD
 
 Os **padrões estratégicos** do DDD ajudam a lidar com a **complexidade em nível de sistema**. Em vez de pensar apenas em entidades ou regras isoladas, aqui o foco é em **separar contextos**, organizar equipes e garantir que tudo esteja falando a mesma língua.
 
 
-### 3.1 🧱 Bounded Context (Contexto Delimitado)
+### 4.1 🧱 Bounded Context (Contexto Delimitado)
 
 Um **Bounded Context** é um **limite bem definido** onde **um modelo de domínio específico** é aplicado e **faz sentido completo** por si só.
 
-#### 3.1.1 ✅ Por que isso é importante?
+#### 4.1.1 ✅ Por que isso é importante?
 
 - Em sistemas grandes, diferentes áreas usam **as mesmas palavras com significados diferentes**.
 - Separar contextos evita confusão, retrabalho e código "genérico demais".
@@ -214,7 +326,7 @@ Um **Bounded Context** é um **limite bem definido** onde **um modelo de domíni
 #### 📌 Pergunta: vocês já viram a palavra 'cliente' significar algo diferente entre setores da mesma empresa?
 
 
-### 3.2 🗺️ Mapeamento de Contexto (Context Map)
+### 4.2 🗺️ Mapeamento de Contexto (Context Map)
 
 O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se relacionam entre si**. Isso ajuda a organizar responsabilidades e integrações.
 
@@ -227,7 +339,7 @@ O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se rel
 | **Shared Kernel**        | Os dois contextos **compartilham uma pequena parte do modelo**, como uma biblioteca comum, e precisam sincronizar mudanças nessa parte. <br>🧠 *Exemplo:* atendimento e Internação usam o mesmo objeto `Paciente`, e combinam juntos como ele deve ser estruturado.                                                  |
 
 
-### 3.3 🎯 Quando usar cada um?
+#### 4.2.1 🎯 Quando usar cada um?
 
 - Use **Anticorruption Layer** quando for integrar com sistemas legados ou APIs que não seguem boas práticas.
 - Use **Partnership** se as equipes estiverem próximas e colaborativas.
@@ -235,7 +347,7 @@ O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se rel
 - Use **Shared Kernel** apenas para partes realmente imutáveis e comuns entre contextos — senão, vira acoplamento disfarçado.
 - Use **Conformist** como última opção, quando não há como negociar com o sistema fornecedor.
 
-#### 3.2.2 🎓 Exemplo visual:
+#### 🎓 Exemplo visual:
 
 Imagine o mapa de um hospital (notem os sentidos das setas):
 
@@ -244,17 +356,17 @@ Imagine o mapa de um hospital (notem os sentidos das setas):
 - Farmácia ⬅️ Anticorruption Layer ⬅️ Faturamento
 
 
-### 3.4 🗣️ Linguagem Ubíqua (Ubiquitous Language)
+### 4.3 🗣️ Linguagem Ubíqua (Ubiquitous Language)
 
 Uma **linguagem ubíqua** é um vocabulário **compartilhado entre especialistas do domínio e desenvolvedores**, que guia a modelagem e aparece no código, nos diagramas e nas conversas.
 
-#### 3.4.1 ✅ Benefícios:
+#### 4.3.1 ✅ Benefícios:
 
 - Reduz erros de entendimento.
 - Aumenta a coesão entre código e negócio.
 - Ajuda a documentação ser viva e clara.
 
-#### 3.4.1 🧾 Exemplo em código:
+#### 4.3.2 🧾 Exemplo em código:
 
 ```
 class Prescricao:
@@ -264,17 +376,13 @@ class Prescricao:
 
 ➡️ Não usamos `insertItem()` ou `handleList()` — usamos o **termo real** que o farmacêutico usa.
 
-
-
-#### 3.4.2 📌 Pergunta
+#### 4.3.3 📌 Pergunta
 
 O que acontece quando o código usa nomes técnicos genéricos (`data`, `item`, `controller`) e ninguém sabe do que se trata?
 
 👉 Isso quebra a linguagem ubíqua e enfraquece o modelo.
 
-
-
-### 3.5 🧠 Resumo final
+### 4.4 🧠 Resumo final
 
 | Padrão Estratégico   | O que é           | Por que importa                       |
 | -------------------- | ----------------- | ------------------------------------- |
@@ -283,3 +391,104 @@ O que acontece quando o código usa nomes técnicos genéricos (`data`, `item`, 
 | **Linguagem Ubíqua** | Vocabulário comum | Código e negócio falam a mesma língua |
 
 
+## Hands On
+
+### 🏥 **CASE PRÁTICO: Reestruturação de Arquitetura no Hospital Vida Plena**
+
+#### 🎯 Contexto Geral
+
+O **Hospital Vida Plena**, um dos maiores centros de saúde do Brasil, enfrenta atualmente sérios desafios de **governança de sistemas**. A instituição é composta por diversas áreas críticas e interdependentes, como:
+
+* Clínica Geral
+* Pronto-Atendimento (PA)
+* Laboratório de Análises
+* Internação
+* Farmácia Hospitalar
+* Financeiro e Faturamento
+* Recursos Humanos
+* Fornecedores e Compras
+
+Cada uma dessas áreas opera com **sistemas próprios, não integrados**, resultando em retrabalho, inconsistências, atrasos em atendimentos, falhas de comunicação e dificuldades em consolidar dados gerenciais. Diante disso, a **diretoria executiva contratou um grupo de estudantes especializados em Engenharia de Software e Arquitetura de Sistemas** para propor uma **nova arquitetura de software** baseada em boas práticas modernas, especialmente **Domain-Driven Design (DDD)**.
+
+---
+
+#### 📌 Desafio do Grupo
+
+Formem grupos simulando consultorias de tecnologia para:
+
+1. **Modelar uma nova arquitetura de software baseada em DDD**, identificando claramente os *Bounded Contexts*.
+2. **Criar um mapa de contexto** mostrando as integrações entre os módulos.
+3. **Propor soluções para garantir escalabilidade, governança, e flexibilidade no longo prazo**.
+4. **Exemplificar ao menos um domínio rico**, com entidades, objetos de valor e regras de negócio encapsuladas.
+
+---
+
+#### 📋 Requisitos do Projeto
+
+1. **Identificação dos Bounded Contexts**
+
+   * Separar os contextos de negócio (ex: Atendimento, Internação, Faturamento, etc.)
+   * Evitar a criação de um modelo anêmico: cada contexto deve conter comportamentos e não apenas atributos.
+
+2. **Mapeamento Estratégico**
+
+   * Criar um **Context Map** com tipos de relacionamento entre os contextos: *Shared Kernel, Customer/Supplier, Conformist, Anticorruption Layer*.
+
+3. **Exemplo Prático de um Contexto**
+
+   * Modelar, por exemplo, o *contexto de Internação*, contendo:
+
+     * Entidades como `Paciente`, `Leito`, `AltaMédica`
+     * Objetos de valor como `PeríodoDeInternação`
+     * Regras como validação de alta apenas com exames e medicação concluídos
+
+4. **Governança de Dados**
+
+   * Propor estratégias de orquestração ou coreografia entre os contextos
+   * Apontar onde usar eventos de domínio, APIs REST, filas (mensageria), etc.
+
+5. **Tecnologias Sugeridas**
+
+   * O grupo pode propor a aplicação dos conceitos usando qualquer linguagem.
+
+---
+
+#### 📦 Entregáveis Esperados
+
+* Documento técnico (PDF) contendo:
+
+  * Diagrama dos *Bounded Contexts*
+  * Descrição de pelo menos 3 contextos com exemplos de entidades, objetos de valor e serviços de domínio
+  * Diagrama do mapa de contextos com explicações sobre os contratos entre os contextos
+  * Discussão sobre o modelo de dados anêmico e justificativa da abordagem DDD adotada
+
+* Apresentação de pitch (5 a 8 slides) com:
+
+  * Visão geral da arquitetura
+  * Justificativas técnicas
+  * Benefícios esperados para a governança do hospital
+
+---
+
+#### ✅ Avaliação
+
+| Critério                                       | Peso |
+| ---------------------------------------------- | ---- |
+| Identificação clara dos contextos e fronteiras | 2,0  |
+| Modelagem rica de pelo menos 1 contexto        | 2,0  |
+| Coerência do mapa de contexto e contratos      | 2,0  |
+| Justificativa do uso de DDD vs alternativas    | 2,0  |
+| Clareza, organização e viabilidade da proposta | 2,0  |
+
+---
+
+#### 💡 Dicas
+
+* **Evitem modelos anêmicos**. Entidades com apenas atributos e getters/setters são um sinal de má modelagem.
+* **Não confundam DAO/DTO com entidades de domínio**.
+* **Use o vocabulário real da área de saúde**: falem com especialistas da área se possível.
+* **Nem tudo precisa ser microserviço** — foquem na separação conceitual, não apenas técnica.
+
+---
+
+Se quiser, posso transformar isso em um template de slide, formulário de avaliação ou ficha de acompanhamento por grupo. Deseja seguir por esse caminho?
