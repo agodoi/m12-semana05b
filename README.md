@@ -476,12 +476,12 @@ Formem grupos simulando consultorias de tecnologia para:
 
 * Documento técnico (PDF) contendo:
 
-  * Diagrama dos *Bounded Contexts*
-  * Descrição de pelo menos 3 contextos com exemplos de entidades, objetos de valor e serviços de domínio
-  * Diagrama do mapa de contextos com explicações sobre os contratos entre os contextos
-  * Discussão sobre o modelo de dados anêmico e justificativa da abordagem DDD adotada
+  * Diagrama dos *Bounded Contexts* [15min]
+  * Descrição de pelo menos 3 contextos com exemplos de entidades, objetos de valor e serviços de domínio [15min]
+  * Diagrama do mapa de contextos com explicações sobre os contratos entre os contextos [30min]
+  * Discussão sobre o modelo de dados anêmico e justificativa da abordagem DDD adotada [30min]
 
-* Apresentação de pitch (5 a 8 slides) com:
+* Apresentação de pitch (5 a 8 slides) com: [30min]
 
   * Visão geral da arquitetura
   * Justificativas técnicas
