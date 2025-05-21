@@ -226,6 +226,15 @@ O **Mapeamento de Contexto** mostra **como os diferentes Bounded Contexts se rel
 | **Anticorruption Layer** | O contexto consumidor **não quer se contaminar** por modelos mal estruturados de outro contexto, então **cria um “tradutor”** para isolar e adaptar os dados. <br>🧠 *Exemplo:* o módulo de Faturamento recebe dados da Farmácia, mas usa uma camada de transformação para adaptá-los ao seu próprio modelo interno. |
 | **Shared Kernel**        | Os dois contextos **compartilham uma pequena parte do modelo**, como uma biblioteca comum, e precisam sincronizar mudanças nessa parte. <br>🧠 *Exemplo:* atendimento e Internação usam o mesmo objeto `Paciente`, e combinam juntos como ele deve ser estruturado.                                                  |
 
+
+### 3.3 🎯 Quando usar cada um?
+
+- Use **Anticorruption Layer** quando for integrar com sistemas legados ou APIs que não seguem boas práticas.
+- Use **Partnership** se as equipes estiverem próximas e colaborativas.
+- Use **Customer/Supplier** quando um time depende de outro, mas não precisa se envolver no desenvolvimento dele.
+- Use **Shared Kernel** apenas para partes realmente imutáveis e comuns entre contextos — senão, vira acoplamento disfarçado.
+- Use **Conformist** como última opção, quando não há como negociar com o sistema fornecedor.
+
 #### 3.2.2 🎓 Exemplo visual:
 
 Imagine o mapa de um hospital (notem os sentidos das setas):
@@ -233,6 +242,11 @@ Imagine o mapa de um hospital (notem os sentidos das setas):
 - Atendimento → Internação → Faturamento
 - Farmácia ↔ Internação
 - Faturamento ⬅ Anticorruption Layer ⬅ Farmácia
+
+- - Atendimento → Internação → Faturamento  
+- Internação ← Farmácia  
+- Faturamento ← Anticorruption Layer ← Farmácia
+
 
 
 ### 🗣️ 3. **Linguagem Ubíqua (Ubiquitous Language)**
