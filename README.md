@@ -481,7 +481,7 @@ Formem grupos simulando consultorias de tecnologia para:
   * Diagrama do mapa de contextos com explicações sobre os contratos entre os contextos. **Usar ferramenta. [30min]**
   * Discussão sobre o modelo de dados anêmico e justificativa da abordagem DDD adotada. **[30min]**
 
-* Apresentação de pitch (5 a 8 slides) com: **[30min]**
+* Apresentação de pitch (5 a 8 slides) com: **[10min por grupo]**
 
   * Visão geral da arquitetura
   * Justificativas técnicas
