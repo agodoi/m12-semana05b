@@ -79,55 +79,38 @@ Um **modelo rico** tem objetos do domínio que **além de dados, também contêm
 - Exemplo:
 
 ```
-class Paciente {
-  private:
-    bool internado;
+class Paciente: # Aqui estamos criando a classe Paciente, que representa uma entidade do domínio hospitalar.
+    def __init__(self):
+        self._internado = False # O atributo _internado indica se o paciente está ou não internado.
 
-  public:
-    Paciente() {
-      internado = false;
-    }
+    def internar(self): # O método internar() representa a regra de negócio para iniciar a internação de um paciente.
+        if self._internado: # Se o paciente já estiver internado, ele não pode ser internado novamente — por isso a verificação com if self._internado.
+            print("Erro: paciente já está internado.")
+            return
+        self._internado = True #Caso não esteja internado, o método atualiza o estado e emite uma mensagem.
+        print("Paciente internado.")
 
-    void internar() {
-      if (internado) {
-        Serial.println("Erro: paciente já está internado.");
-        return;
-      }
-      internado = true;
-      Serial.println("Paciente internado.");
-    }
+    def dar_alta(self): # O método dar_alta() representa a regra de negócio para liberar o paciente da internação.
+        if not self._internado: #Se o paciente não estiver internado, não se pode dar alta — e isso é tratado pela verificação.
+            print("Erro: paciente não está internado.")
+            return
+        self._internado = False # Se estiver internado, ele é liberado com sucesso.
+        print("Alta concedida ao paciente.")
 
-    void darAlta() {
-      if (!internado) {
-        Serial.println("Erro: paciente não está internado.");
-        return;
-      }
-      internado = false;
-      Serial.println("Alta concedida ao paciente.");
-    }
+    def esta_internado(self): #Esse método expõe de forma segura o estado de internação, sem permitir que outras partes do sistema modifiquem o valor diretamente.
+        return self._internado
 
-    bool estaInternado() {
-      return internado;
-    }
-};
 
-Paciente paciente;
-
-void setup() {
-  Serial.begin(9600);
-
-  paciente.internar();     // Deve internar
-  paciente.internar();     // Deve avisar que já está internado
-  paciente.darAlta();      // Deve dar alta
-  paciente.darAlta();      // Deve avisar que não está internado
-}
-
-void loop() {
-}
+paciente = Paciente() #Primeiro o paciente é internado com sucesso.
+paciente.internar() 
+paciente.internar() #Tentar interná-lo de novo gera uma mensagem de erro.
+paciente.dar_alta() #Ele recebe alta com sucesso.
+paciente.dar_alta() #Tentar dar alta novamente gera outro erro.
 ```
 
-Neste caso, a entidade ```Paciente``` sabe se internar ou receber alta, sem depender de uma função externa. A regra está encapsulada onde deveria estar: dentro da própria entidade. Isto é, esse exemplo mantém a essência do DDD: o comportamento relevante está dentro do próprio objeto do domínio — no caso, o paciente — evitando lógica solta em outros lugares.
+Neste caso, a entidade ```Paciente``` controla seu próprio estado de internação, com os métodos ```internar()``` e ```dar_alta()``` encapsulando a lógica necessária. Não é preciso recorrer a funções externas para validar ou alterar seu comportamento. Isso torna o código mais coeso, expressivo e alinhado ao domínio real.
 
+➡️ Em termos de DDD, este é um exemplo de modelo de domínio rico, onde os dados e comportamentos vivem juntos, refletindo com fidelidade as regras do negócio dentro da própria entidade.
 
 ### 2.4 📖 Exemplo didático de Modelo Anêmico: O caso do *Paperboy* (TripleD.io)
 
@@ -156,6 +139,35 @@ class Casa:
 def cobrar(casa):
     # lógica de cobrança externa
 ```
+
+- A classe Casa não sabe fazer nada — ela apenas contém dados (nome, endereço).
+- Toda a lógica de negócio, como cobrança, reclamação ou registro de entrega, é implementada fora da entidade, em funções externas como cobrar().
+- Isso quebra o encapsulamento e distribui regras importantes fora do domínio.
+- Em vez de deixar cobrar() fora da classe, o ideal seria que a própria casa soubesse se deve ou não pagar, ou ao menos que o Paperboy interagisse com a casa de forma clara:
+
+```
+class Casa:
+    def __init__(self, nome, endereco):
+        self.nome = nome
+        self.endereco = endereco
+
+    def reclamar(self):
+        print(f"{self.nome} reclamou da entrega!")
+
+class Paperboy:
+    def cobrar(self, casa):
+        print(f"Cobrando {casa.nome} na rua {casa.endereco}.")
+```
+➡️ Agora a Casa tem comportamento, e o código começa a "contar uma história" do domínio real, como o DDD defende.
+
+O exemplo original é anêmico porque:
+
+- A entidade é apenas um saco de dados.
+- As regras do domínio não estão associadas aos objetos que elas afetam.
+- O código fica pouco expressivo e mais difícil de evoluir.
+
+🛑 No DDD, dizemos que “os objetos devem carregar tanto os dados quanto o comportamento”.
+O modelo anêmico vai contra essa ideia, e por isso é considerado um anti-padrão.
 
 #### ✅ No modelo rico:
 
@@ -205,14 +217,38 @@ São objetos que **têm identidade própria**, ou seja, o que importa é “quem
 #### 🏥 Exemplo hospitalar:
 
 ```
-class Paciente {
-private:
-    int id;
-    string nome;
-};
+class PacienteEntidade:
+    def __init__(self, id, nome):
+        self.id = id
+        self.nome = nome
 ```
 
 Mesmo que o nome do paciente mude (ex: após casamento), **ele continua sendo o mesmo paciente** no sistema por causa do seu ID.
+
+**O que esse código representa?**
+
+A classe PacienteEntidade representa uma entidade do domínio hospitalar. Em DDD, uma entidade é um objeto que:
+
+- Tem identidade própria, ou seja, pode ser distinguido dos demais mesmo que seus atributos mudem.
+- Possui ciclo de vida dentro do sistema.
+- Pode ter atributos mutáveis, mas seu ID nunca muda — é isso que define quem ele é.
+
+**Por que isso é uma entidade?**
+
+| Característica                            | Aplicação no código                                                        |
+| ----------------------------------------- | -------------------------------------------------------------------------- |
+| 🔑 **Identidade única**                   | Atributo `id` representa o identificador exclusivo do paciente             |
+| 🔄 **Possível mutabilidade**              | O nome do paciente pode mudar, mas o ID permanece o mesmo                  |
+| 💡 **Persistência baseada em identidade** | Quando buscamos o paciente no sistema, buscamos pelo `id`, não pelo `nome` |
+
+**Diferença entre Entidade e Objeto de Valor**
+
+| Conceito               | Entidade                   | Objeto de Valor                          |
+| ---------------------- | -------------------------- | ---------------------------------------- |
+| **Possui identidade?** | ✅ Sim, via ID              | ❌ Não tem identidade                     |
+| **Mutável?**           | ✅ Pode mudar com o tempo   | ❌ Sempre imutável                        |
+| **Comparação**         | Feita por ID               | Feita por conteúdo dos atributos         |
+| **Exemplo típico**     | Paciente, Produto, Usuário | Endereço, Período, Coordenada geográfica |
 
 
 ### 3.2 🧱 Objetos de Valor (Value Objects)
@@ -225,11 +261,13 @@ São objetos **sem identidade própria**, usados para **expressar um conceito co
 #### 🏥 Exemplo:
 
 ```
-class Endereco {
-private:
-    string rua;
-    string cidade;
-};
+class Endereco:
+    def __init__(self, rua, cidade):
+        self.rua = rua
+        self.cidade = cidade
+
+    def __eq__(self, other):
+        return self.rua == other.rua and self.cidade == other.cidade
 ```
 
 Dois endereços com os mesmos dados são considerados **iguais**.
@@ -252,6 +290,85 @@ Um **agregado** é um **conjunto de entidades e objetos de valor** que forma uma
 
 ➡️ Todas as alterações devem passar **pela entidade raiz**, evitando manipulação indevida de partes isoladas.
 
+```
+# Objeto de Valor
+class Endereco:
+    def __init__(self, rua, cidade):
+        self.rua = rua
+        self.cidade = cidade
+
+# Objeto de Valor
+class PeriodoDeInternacao:
+    def __init__(self, data_entrada, data_saida):
+        self.data_entrada = data_entrada
+        self.data_saida = data_saida
+
+# Subentidade
+class Prescricao:
+    def __init__(self, descricao):
+        self.descricao = descricao
+
+# Subentidade
+class HistoricoDeAlta:
+    def __init__(self, data, resumo):
+        self.data = data
+        self.resumo = resumo
+
+# Entidade Raiz (Aggregate Root)
+class PacienteInternado:
+    def __init__(self, id, nome, endereco, periodo):
+        self.id = id  # Identidade da entidade raiz
+        self.nome = nome
+        self.endereco = endereco
+        self.periodo = periodo
+        self.prescricoes = []
+        self.historico_de_alta = None
+
+    def adicionar_prescricao(self, prescricao):
+        self.prescricoes.append(prescricao)
+
+    def conceder_alta(self, data, resumo):
+        if len(self.prescricoes) == 0:
+            print("Erro: paciente não pode ter alta sem prescrições.")
+            return
+        self.historico_de_alta = HistoricoDeAlta(data, resumo)
+        print("Alta concedida ao paciente.")
+
+    def exibir_resumo(self):
+        print(f"Paciente: {self.nome}")
+        print(f"Endereço: {self.endereco.rua}, {self.endereco.cidade}")
+        print(f"Período: {self.periodo.data_entrada} até {self.periodo.data_saida}")
+        print(f"Prescrições: {[p.descricao for p in self.prescricoes]}")
+        if self.historico_de_alta:
+            print(f"Alta em {self.historico_de_alta.data}: {self.historico_de_alta.resumo}")
+        else:
+            print("Paciente ainda internado.")
+```
+
+**Um agregado é uma unidade de consistência composta por:**
+
+- Uma entidade raiz (chamada de Aggregate Root) — é por onde todas as operações devem passar.
+- Outras entidades ou objetos de valor, que fazem sentido apenas dentro do contexto do agregado.
+- Regras de negócio que garantem integridade e validação centralizada.
+
+Explicação do exemplo:
+
+| Elemento                       | Classe em Python                  | Papel no DDD                                 |
+| ------------------------------ | --------------------------------- | -------------------------------------------- |
+| Entidade raiz (Aggregate Root) | `PacienteInternado`               | Controla todo o agregado                     |
+| Objetos de valor               | `Endereco`, `PeriodoDeInternacao` | Sem identidade própria, usados como partes   |
+| Subentidades                   | `Prescricao`, `HistoricoDeAlta`   | Entidades com significado dentro do agregado |
+| Regras de negócio              | `conceder_alta()`                 | Alta só é concedida se houver prescrição     |
+
+**Por que o PacienteInternado é agregado do root?**
+
+- Porque é por ele que você interage com todo o restante do agregado.
+- Exemplo: não se pode manipular diretamente o HistoricoDeAlta ou a Prescricao — tudo passa pela entidade raiz, o que garante controle total e consistência.
+
+**O que seria errado?**
+
+- Permitir que outra parte do sistema altere diretamente Prescricao ou HistoricoDeAlta.
+- Criar Paciente, Endereco, Prescricao como objetos separados sem relação formal — isso quebra a consistência do domínio.
 
 ### 3.4 💾 Repositórios (Repositories)
 
@@ -263,15 +380,34 @@ São **interfaces de acesso ao agregado**, simulando o comportamento de uma **co
 #### 🏥 Exemplo:
 
 ```
-class PacienteRepository {
-public:
-    Paciente buscarPorId(int id);
-    void salvar(Paciente paciente);
-};
+class InternacaoRepository:
+    def salvar(self, internacao):
+        print("Internação salva no sistema.")
+        internacao.mostrar_resumo()
+
+    def buscar_por_paciente_id(self, id):
+        paciente = PacienteEntidade(id, "Paciente Exemplo")
+        periodo = PeriodoDeInternacao("10/04/2025", "15/04/2025")
+        return Internacao(paciente, 3, periodo)
 ```
 
 O desenvolvedor que usa o repositório **não precisa saber** como os dados são persistidos — só precisa pensar em "domínio".
 
+O ```InternacaoRepository``` é um repositório, um padrão usado para isolar o domínio da lógica de persistência de dados. Em DDD, o repositório atua como uma ponte entre o domínio e a infraestrutura (como banco de dados, APIs, arquivos).
+
+**Método salvar(self, internacao)**
+
+- Simula salvar uma internação em um sistema (ex: banco de dados).
+- Em um sistema real, isso envolveria uma chamada ao banco, mas no DDD essa parte é escondida da lógica de negócio.
+- O método confirma o sucesso e imprime um resumo, reforçando que estamos tratando o agregado como uma unidade coesa.
+
+**Método buscar_por_paciente_id(self, id)**
+
+- Simula uma consulta ao sistema para recuperar uma internação com base no ID do paciente.
+- Retorna uma nova instância do agregado Internacao, composta por:
+  - Uma entidade PacienteEntidade
+  - Um objeto de valor PeriodoDeInternacao
+- Isso mostra como o repositório "reconstrói" um agregado inteiro, com seus dados e dependências.
 
 ### 3.5 🧠 Serviços de Domínio
 
@@ -283,10 +419,20 @@ Representam **operações importantes do negócio** que **não pertencem diretam
 #### 🏥 Exemplo:
 
 ```
-class InternacaoService {
-public:
-    void internarPaciente(Paciente paciente, Leito leito);
-};
+class InternacaoService:
+    def __init__(self):
+        self.repo = InternacaoRepository()
+
+    def registrar_internacao(self, paciente, leito_id, entrada, saida):
+        periodo = PeriodoDeInternacao(entrada, saida)
+        internacao = Internacao(paciente, leito_id, periodo)
+        self.repo.salvar(internacao)
+
+
+paciente_exemplo = PacienteEntidade(101, "Maria da Silva")
+servico = InternacaoService()
+servico.registrar_internacao(paciente_exemplo, 7, "20/05/2025", "25/05/2025")
+
 ```
 
 Essa operação envolve **Paciente + Leito**, mas não pertence exclusivamente a nenhum dos dois.
